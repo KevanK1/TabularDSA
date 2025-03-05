@@ -1,1 +1,3 @@
 node_modules/
+fastapi-service/venv/
+__pycache__/
