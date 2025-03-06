@@ -1,25 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GSAP Stagger Animation</title>
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-  </head>
-  <body class="bg-gray-800 flex items-center justify-center h-screen">
-    <div class="bg-blue-500 text-white p-4 rounded text-container">
-      <span class="letter">A</span>
-      <span class="letter">n</span>
-      <span class="letter">i</span>
-      <span class="letter">m</span>
-      <span class="letter">a</span>
-      <span class="letter">t</span>
-      <span class="letter">e</span>
-      <span class="letter">!</span>
-    </div>
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TabularDSA - Upload Data</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="/js/scriptGSAP.js"></script>
-  </body>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-6 max-w-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">Upload Data for TabularDSA</h1>
+        <% if (message) { %>
+            <p class="text-center text-red-400 mb-4"><%= message %></p>
+        <% } %>
+        <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <div>
+                <label class="block mb-2">Teachers File (Excel)</label>
+                <input type="file" name="teachersFile" accept=".xlsx" class="w-full p-2 bg-gray-800 rounded" required>
+            </div>
+            <div>
+                <label class="block mb-2">Subjects File (Excel)</label>
+                <input type="file" name="subjectsFile" accept=".xlsx" class="w-full p-2 bg-gray-800 rounded" required>
+            </div>
+            <div>
+                <label class="block mb-2">Rooms File (Excel)</label>
+                <input type="file" name="roomsFile" accept=".xlsx" class="w-full p-2 bg-gray-800 rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4">
+                Upload Files
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // GSAP Animation
+        gsap.from("form", {
+            opacity: 0,
+            y: 20,
+            duration: 0.8,
+            ease: "power2.out"
+        });
+    </script>
+</body>
 </html>
