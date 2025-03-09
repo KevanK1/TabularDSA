@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .wave-container {
+      position: bottom;
+      bottom: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+    .wave-container img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transform: translateY(50%);
+    }
+    .blob {
+      width: 100px;
+      height: 100px;
+    }
+    </style>
+</head>
+<body>
+  <div class="bg-black min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+    <div class="container mx-auto text-white text-center py-20 pb-40 relative z-10">
+      <h1 class="text-[20vw] font-bold uppercase leading-none mb-12">
+        <span>u</span><span>p</span><span>l</span><span>o</span><span>a</span><span>d</span>
+      </h1>
+      <p class="text-[2.5vw] uppercase mb-20">prepare your timetable data</p>
+      
+      <div class="space-y-10">
+        <div>
+          <label class="block text-[3vw] uppercase mb-4">teachers</label>
+          <input type="file" name="teachersFile" accept=".xlsx"
+            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4" required />
+        </div>
+        <div>
+          <label class="block text-[3vw] uppercase mb-4">subjects</label>
+          <input type="file" name="subjectsFile" accept=".xlsx"
+            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4" required />
+        </div>
+        <div>
+          <label class="block text-[3vw] uppercase mb-4">rooms</label>
+          <input type="file" name="roomsFile" accept=".xlsx"
+            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4" required />
+        </div>
+      </div>
+  
+      <button type="submit" form="uploadForm"
+        class="mt-20 text-[3vw] uppercase bg-white text-black font-bold py-3 px-6 rounded hover:bg-black hover:text-white hover:border hover:border-white transition duration-300">
+        start
+      </button>
+    </div>
+  
+    <!-- Background Image -->
+    <img src="../assets/layered1.png" alt="" class="absolute bottom-0 left-0 w-full h-[30%] -z-10">
+  </div>
+  
+</body>
+</html>
