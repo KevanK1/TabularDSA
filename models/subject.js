@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const subjectSchema = new mongoose.Schema({
-    code: { type: String, required: true, unique: true },
+    code: { type: String, required: true },
     name: { type: String, required: true },
-    teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' }]
+    assignedTeachers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', default: [] }]
 });
 
 module.exports = mongoose.model('Subject', subjectSchema);

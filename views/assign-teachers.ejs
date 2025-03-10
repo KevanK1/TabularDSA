@@ -4,25 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TabularDSA - Assign Teachers</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <!-- Montserrat and Poppins Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
     <style>
-      /* Ensure the footer SVG stretches and only shows the wave */
       .wave-footer {
         position: relative;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 400px; /* Adjust based on the actual wave height */
+        height: 400px;
         overflow: hidden;
       }
       .wave-footer img {
@@ -31,15 +24,17 @@
         object-fit: cover;
         object-position: bottom;
       }
-      /* Glassmorphism Button Styles */
       .glass-btn {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.4);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 2px solid rgba(255, 255, 255, 0.5);
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        display: block !important;
+        margin: 20px auto;
+        color: white !important;
       }
       .glass-btn:hover {
         background: rgba(255, 255, 255, 0.3);
@@ -47,103 +42,87 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
       }
-      /* Subject Button Styles */
-      .subject-btn.active {
-        background: rgba(255, 255, 255, 0.4);
-        border-color: rgba(255, 255, 255, 0.8);
+      .assignment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 auto;
+        max-width: 90vw;
+        overflow-x: auto;
+        display: block;
       }
-      /* Teacher List Styles */
-      .teacher-list {
-        max-height: 400px;
-        overflow-y: auto;
+      .assignment-table th,
+      .assignment-table td {
         border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 10px;
         padding: 10px;
+        text-align: center;
+        color: white;
+        font-family: Poppins, sans-serif;
       }
-      .teacher-item {
-        display: flex;
-        align-items: center;
-        padding: 5px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      .assignment-table th {
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 1.2vw;
+        font-weight: bold;
+        text-transform: uppercase;
       }
-      .teacher-item input[type="checkbox"] {
-        margin-right: 10px;
+      .assignment-table td {
+        font-size: 1vw;
+      }
+      .assignment-table th:nth-child(1),
+      .assignment-table th:nth-child(2),
+      .assignment-table th:nth-child(3),
+      .assignment-table td:nth-child(1),
+      .assignment-table td:nth-child(2),
+      .assignment-table td:nth-child(3) {
+        background: rgba(255, 255, 255, 0.05);
+        min-width: 150px;
       }
     </style>
   </head>
   <body class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden">
-    <!-- Main Content -->
-    <div class="container mx-auto text-white text-center py-20">
-      <!-- Hero Text -->
-      <h1
-        class="text-[20vw] font-bold uppercase leading-none mb-12"
-        style="
-          font-family: Poppins, sans-serif;
-          font-weight: 500;
-          font-style: italic;
-        "
-      >
+    <div class="container mx-auto text-white text-center py-20 pb-40">
+      <h1 class="text-[20vw] font-bold uppercase leading-none mb-12" style="font-family: Poppins, sans-serif; font-weight: 500; font-style: italic;">
         <span>a</span><span>s</span><span>s</span><span>i</span><span>g</span><span>n</span>
       </h1>
-
-      <!-- Subtext -->
       <p class="text-[2.5vw] uppercase mb-20">assign teachers to subjects</p>
-
-      <!-- Subject Selection -->
-      <div class="mb-10">
-        <h2 class="text-[2vw] uppercase text-red-500 mb-4">Subject's Teacher Selection Page</h2>
-        <div class="flex flex-wrap justify-center mb-4">
-          <% subjects.forEach(subject => { %>
-            <button
-              class="subject-btn <%= selectedSubject && selectedSubject._id.toString() === subject._id.toString() ? 'active' : '' %>"
-              data-subject-id="<%= subject._id %>"
-            >
-              <%= subject.name %> (<%= subject.code %>)
-            </button>
-          <% }); %>
+      <form id="assignForm" action="/assign" method="POST">
+        <div class="mb-10">
+          <h2 class="text-[2vw] uppercase text-red-500 mb-4">Subject's Teacher Selection Page</h2>
+          <div class="overflow-x-auto">
+            <table class="assignment-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <% subjects.forEach(subject => { %>
+                    <th><%= subject.name %> (<%= subject.code %>)</th>
+                  <% }); %>
+                </tr>
+              </thead>
+              <tbody>
+                <% teachers.forEach(teacher => { %>
+                  <tr>
+                    <td><%= teacher.mis_id %></td>
+                    <td><%= teacher.name %></td>
+                    <td><%= teacher.email %></td>
+                    <% subjects.forEach(subject => { %>
+                      <td>
+                        <input type="checkbox" name="assignments[<%= subject._id %>][]" value="<%= teacher._id %>" <%= subject.assignedTeachers && subject.assignedTeachers.map(id => id.toString()).includes(teacher._id.toString()) ? 'checked' : '' %> />
+                      </td>
+                    <% }); %>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-
-      <!-- Teacher Assignment Form -->
-      <form id="assignForm" action="/assign" method="POST" class="w-full max-w-2xl">
-        <input type="hidden" name="subjectId" id="selectedSubjectId" value="">
-        <div class="mb-4">
-          <input
-            type="text"
-            id="teacherSearch"
-            placeholder="Search"
-            class="w-full p-2 bg-black border-2 border-white rounded text-white"
-            onkeyup="filterTeachers()"
-          />
-        </div>
-        <div class="teacher-list">
-          <% teachers.forEach(teacher => { %>
-            <label class="teacher-item">
-              <input type="checkbox" name="teacherIds" value="<%= teacher._id %>">
-              <%= teacher.mis_id %> <%= teacher.name %> (<%= teacher.email %>)
-            </label>
-          <% }); %>
-        </div>
-        <button
-          type="submit"
-          class="glass-btn mt-10 text-[2.5vw] uppercase text-black font-bold py-3 px-6 rounded"
-        >
-          Assign
-        </button>
+        <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded">Submit</button>
       </form>
     </div>
-
-    <!-- Wave Footer -->
     <div class="wave-footer">
-      <img
-        src="../assets/layered-peaks-haikei.svg"
-        alt="Wave Footer"
-        class="w-full h-full"
-      />
+      <img src="../assets/layered-peaks-haikei.svg" alt="Wave Footer" class="w-full h-full" />
     </div>
-
     <script>
-      // GSAP Animation for "assign" with Stagger and Blink
       gsap.from("h1 span", {
         opacity: 0,
         y: 50,
@@ -164,7 +143,6 @@
           });
         },
       });
-
       gsap.from("p", {
         opacity: 0,
         y: 30,
@@ -172,42 +150,14 @@
         delay: 0.8,
         ease: "power2.out",
       });
-      gsap.from(".space-y-6 div", {
+      gsap.from(".assignment-table", {
         opacity: 0,
         y: 20,
         duration: 0.8,
-        stagger: 0.2,
         delay: 1.0,
         ease: "power2.out",
       });
-      gsap.from(".glass-btn", {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.8,
-        delay: 1.6,
-        ease: "elastic.out(1, 0.5)",
-      });
-
-      // Subject Button Click Handler
-      document.querySelectorAll('.subject-btn').forEach(button => {
-        button.addEventListener('click', () => {
-          document.querySelectorAll('.subject-btn').forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
-          document.getElementById('selectedSubjectId').value = button.getAttribute('data-subject-id');
-        });
-      });
-
-      // Teacher Search Filter
-      function filterTeachers() {
-        const input = document.getElementById('teacherSearch');
-        const filter = input.value.toLowerCase();
-        const teacherItems = document.querySelectorAll('.teacher-item');
-
-        teacherItems.forEach(item => {
-          const text = item.textContent.toLowerCase();
-          item.style.display = text.includes(filter) ? '' : 'none';
-        });
-      }
+      gsap.fromTo(".glass-btn", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, delay: 1.6, ease: "elastic.out(1, 0.5)" });
     </script>
   </body>
 </html>

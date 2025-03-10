@@ -98,12 +98,12 @@ app.post('/upload', upload.fields([
 // Route for Page 2: Assign Teachers
 app.get('/assign-teachers', async (req, res) => {
     try {
-        // Fetch teachers and subjects from MongoDB
+        // Fetch teachers and subjects from MongoDB, populate assignedTeachers
         const teachers = await Teacher.find({}, 'name mis_id email');
-        const subjects = await Subject.find({}, 'name code');
+        const subjects = await Subject.find({}, 'name code assignedTeachers').populate('assignedTeachers');
 
         // Render the assign-teachers page with the data
-        res.render('assign-teachers', { teachers, subjects, selectedSubject: null });
+        res.render('assign-teachers', { teachers, subjects });
     } catch (err) {
         console.error(err);
         res.status(500).send('Error loading assign-teachers page.');
@@ -113,21 +113,24 @@ app.get('/assign-teachers', async (req, res) => {
 // Route to handle teacher-subject assignment
 app.post('/assign', async (req, res) => {
     try {
-        const { subjectId, teacherIds } = req.body;
+        const assignments = req.body.assignments; // { subjectId1: [teacherId1, teacherId2], subjectId2: [teacherId3], ... }
 
-        // Convert teacherIds to an array if it's a single string
-        const teachersArray = Array.isArray(teacherIds) ? teacherIds : [teacherIds];
+        // Loop through each assignment and update the subject
+        for (const subjectId in assignments) {
+            const teacherIds = assignments[subjectId];
+            // If teacherIds is not an array (e.g., no teachers selected), convert it to an empty array
+            const teachersArray = Array.isArray(teacherIds) ? teacherIds : teacherIds ? [teacherIds] : [];
+            // Update the subject with the new list of teachers (replace existing)
+            await Subject.findByIdAndUpdate(subjectId, {
+                assignedTeachers: teachersArray
+            }, { new: true, runValidators: true });
+        }
 
-        // Update the subject with the assigned teachers
-        await Subject.findByIdAndUpdate(subjectId, {
-            $addToSet: { assignedTeachers: { $each: teachersArray } } // Add unique teachers
-        }, { new: true, runValidators: true });
-
-        // Redirect back to assign-teachers to allow more assignments
+        // Redirect back to assign-teachers to allow further edits
         res.redirect('/assign-teachers');
     } catch (err) {
         console.error(err);
-        res.status(500).send('Error assigning teachers to subject.');
+        res.status(500).send('Error assigning teachers to subjects.');
     }
 });
 
