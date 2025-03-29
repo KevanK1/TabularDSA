@@ -1,76 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TabularDSA - Display Timetable</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      body {
-        background-color: black;
-        color: white;
-        font-family: "Poppins", sans-serif;
-      }
-      .timetable-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px auto;
-        max-width: 90vw;
-      }
-      .timetable-table th,
-      .timetable-table td {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        padding: 10px;
-        text-align: center;
-      }
-      .timetable-table th {
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 1.2rem;
-        font-weight: bold;
-        text-transform: uppercase;
-      }
+        .timetable-card { margin: 20px 0; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .time-slot { padding: 15px; margin: 10px; background: #f8f9fa; border-radius: 8px; }
+        .time-slot h5 { color: #0d6efd; margin-bottom: 10px; }
+        .subject-badge { background: #0d6efd; color: white; padding: 5px 10px; border-radius: 5px; }
+        .empty-slot { background: #e9ecef; color: #6c757d; padding: 5px 10px; border-radius: 5px; }
     </style>
-  </head>
-  <body class="min-h-screen flex flex-col items-center justify-center">
-    <div class="container mx-auto text-center py-20">
-      <h1 class="text-6xl font-bold uppercase mb-12">Timetable</h1>
-      <% if (timetables && timetables.error) { %>
-        <p>Error generating timetables: <%= timetables.error %></p>
-      <% } else if (!timetables || timetables.length === 0) { %>
-        <p>No timetables available. Please ensure sufficient data is provided and assignments are saved.</p>
-      <% } else { %>
-        <% timetables.forEach(timetable => { %>
-          <h2 class="text-3xl uppercase mb-4"><%= timetable.division %></h2>
-          <table class="timetable-table mb-10">
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>1:00-2:00</th>
-                <th>2:00-3:00</th>
-                <th>3:00-4:00</th>
-                <th>4:00-5:00</th>
-                <th>5:00-6:00</th>
-                <th>6:00-7:00</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].forEach(day => { %>
-                <tr>
-                  <td><%= day %></td>
-                  <% for (let slot = 1; slot <= 6; slot++) { %>
-                    <td>
-                      <% const slotKey = `${slot}:00-${slot+1}:00`; %>
-                      <%= timetable.schedule && timetable.schedule[day] && timetable.schedule[day][slotKey]
-                        ? `${timetable.schedule[day][slotKey].subject} (${timetable.schedule[day][slotKey].teacher}, ${timetable.schedule[day][slotKey].room})`
-                        : "-" %>
-                    </td>
-                  <% } %>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        <% }); %>
-      <% } %>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Generated Timetables</h1>
+        
+        <% if (!timetables || timetables.length === 0) { %>
+            <div class="alert alert-warning text-center">
+                No timetables available. Please ensure enough teachers are assigned to subjects.
+            </div>
+        <% } else { %>
+            <% timetables.forEach(timetable => { %>
+                <div class="card timetable-card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0"><%= timetable.division %></h2>
+                    </div>
+                    <div class="card-body">
+                        <% const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; %>
+                        <% days.forEach(day => { %>
+                            <% if (Object.keys(timetable.schedule[day]).length > 0) { %>
+                                <div class="mb-4">
+                                    <h3 class="text-secondary mb-3"><%= day %></h3>
+                                    <div class="row">
+                                        <% Object.entries(timetable.schedule[day]).forEach(([time, slot]) => { %>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="time-slot">
+                                                    <h5><%= time %></h5>
+                                                    <% if (slot.subject) { %>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="subject-badge"><%= slot.subject %></span>
+                                                            <div class="text-end">
+                                                                <div><small>Teacher: <%= slot.teacher %></small></div>
+                                                                <div><small>Room: <%= slot.room %></small></div>
+                                                            </div>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div class="empty-slot">Not Assigned</div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
     </div>
-  </body>
+</body>
 </html>

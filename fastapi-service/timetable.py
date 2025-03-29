@@ -17,23 +17,30 @@ class TimetableDay(BaseModel):
 def assign_slot(timetable: TimetableDay, used_teachers: Dict, used_rooms: Dict, subject_counts: Dict,
                 teachers: List[dict], subjects: List[dict], rooms: List[dict], day_index: int, slot_index: int,
                 division_name: str) -> bool:
-    """Recursively assign a slot in the timetable with backtracking."""
+    """Recursively assign a slot in the timetable with backtracking, allowing partial schedules."""
     if day_index >= 6:  # All 6 days processed
         return True
 
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     day = days[day_index]
     time_slot = f"{slot_index+1}:00-{slot_index+2}:00"
+    
+    print(f"Attempting to assign slot for {division_name} on {day} at {time_slot}")  # Debug log
 
     available_subjects = [s for s in subjects if s["assignedTeachers"]]
     if not available_subjects:
         print(f"No subjects with assigned teachers for {division_name}")
         return False
 
+    # Ensure subject_counts[division_name] exists
+    if division_name not in subject_counts:
+        raise ValueError(f"Division {division_name} not found in subject_counts")
+
     available_subjects.sort(key=lambda s: subject_counts[division_name][s["name"]])  # Prioritize least assigned
     available_teachers = [t for t in teachers if t["id"] in sum([s["assignedTeachers"] for s in available_subjects], [])]
     available_rooms = rooms
 
+    slot_assigned = False
     for subject in available_subjects:
         for teacher in [t for t in available_teachers if t["id"] in subject["assignedTeachers"]]:
             for room in available_rooms:
@@ -53,6 +60,7 @@ def assign_slot(timetable: TimetableDay, used_teachers: Dict, used_rooms: Dict, 
                     used_teachers.setdefault((day, time_slot), []).append(slot)
                     used_rooms.setdefault((day, time_slot), []).append(slot)
                     subject_counts[division_name][subject["name"]] += 1
+                    slot_assigned = True
 
                     # Move to next slot
                     next_slot = (slot_index + 1) % 6
@@ -73,23 +81,41 @@ def assign_slot(timetable: TimetableDay, used_teachers: Dict, used_rooms: Dict, 
                         del used_rooms[(day, time_slot)]
                     subject_counts[division_name][subject["name"]] -= 1
 
-    return False
+    # If no assignment was possible for this slot, move to the next slot (partial schedule)
+    if not slot_assigned:
+        print(f"Could not assign slot for {division_name} on {day} at {time_slot}, skipping...")
+        next_slot = (slot_index + 1) % 6
+        next_day = day_index + (1 if next_slot == 0 else 0)
+        return assign_slot(timetable, used_teachers, used_rooms, subject_counts,
+                         teachers, subjects, rooms, next_day, next_slot, division_name)
+
+    return True  # Return True if we successfully assigned this slot
 
 def generate_timetables(teachers: List[dict], subjects: List[dict], rooms: List[dict], divisions: List[dict]) -> Dict[str, TimetableDay]:
     divisions = divisions[:5]  # Limit to 5 divisions
     timetables = {}
+
+    # Initialize subject_counts as a nested dictionary
+    subject_counts = {
+        division["name"]: {sub["name"]: 0 for sub in subjects}
+        for division in divisions
+    }
+    print(f"Initialized subject_counts: {subject_counts}")  # Debug log
 
     for division in divisions:
         print(f"Generating timetable for {division['name']}")  # Debug log
         timetable = TimetableDay()
         used_teachers = {}
         used_rooms = {}
-        subject_counts = {sub["name"]: 0 for sub in subjects}  # Counter for this division
 
         # Start the recursive assignment from the first day and slot
-        if not assign_slot(timetable, used_teachers, used_rooms, subject_counts,
-                         teachers, subjects, rooms, 0, 0, division["name"]):
-            print(f"Warning: Could not fully assign timetable for {division['name']}")
+        success = assign_slot(timetable, used_teachers, used_rooms, subject_counts,
+                    teachers, subjects, rooms, 0, 0, division["name"])
+        
+        if success:
+            print(f"Successfully generated complete timetable for {division['name']}")
+        else:
+            print(f"Generated partial timetable for {division['name']}")
 
         timetables[division["name"]] = timetable
 

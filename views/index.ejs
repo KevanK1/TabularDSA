@@ -1,316 +1,160 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TabularDSA - Upload</title>
-
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <!-- GSAP CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    
+    <!-- Montserrat and Poppins Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet"
     />
     <style>
-      /* Ensure the footer SVG stretches and only shows the wave */
-      .wave-footer {
-        position: relative;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 400px; /* Adjust based on the actual wave height */
-        overflow: hidden;
-      }
-      .wave-footer img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Ensures the SVG scales without empty space */
-        object-position: bottom; /* Focus on the wave part (adjust as needed) */
-      }
-      /* Ensure button visibility */
-      .submit-btn {
-        display: inline-block;
-        visibility: visible;
-        opacity: 1 !important; /* Fallback in case GSAP fails */
-        min-height: 50px; /* Ensure it has a minimum height */
-        margin-bottom: 20px; /* Add some spacing to avoid overlap */
-      }
-    </style>
-  </head>
-  <body>
-    <div
-      class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden relative"
-    >
-      
-      <div class="container mx-auto text-white text-center py-20">
-        
-        <h1
-          class="text-[20vw] font-bold uppercase leading-none mb-12"
-          style="
-            font-family: Poppins, sans-serif;
-            font-weight: 500;
-            font-style: italic;
-          "
-        >
-          <span>u</span><span>p</span><span>l</span><span>o</span><span>a</span><span>d</span>
-        </h1>
-
-             <p class="text-[2.5vw] uppercase mb-20">prepare your timetable data</p>
-
-        
-        <div class="space-y-10">
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">teachers</label>
-            <input
-              type="file"
-              name="teachersFile"
-              accept=".xlsx"
-              class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">subjects</label>
-            <input
-              type="file"
-              name="subjectsFile"
-              accept=".xlsx"
-              class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-              required
-            />
-          </div>
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">rooms</label>
-            <input
-              type="file"
-              name="roomsFile"
-              accept=".xlsx"
-              class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-              required
-            />
-          </div>
-        </div>
-
-        
-        <button
-          type="submit"
-          form="uploadForm"
-          class="submit-btn mt-20 text-[3vw] uppercase bg-white text-black font-bold py-3 px-6 rounded hover:bg-black hover:text-white hover:border hover:border-white transition duration-300"
-        >
-          Next
-        </button>
-      </div>
-
-      <form
-        id="uploadForm"
-        action="/upload"
-        method="POST"
-        enctype="multipart/form-data"
-        class="hidden"
-      >
-        <input type="file" name="teachersFile" required />
-        <input type="file" name="subjectsFile" required />
-        <input type="file" name="roomsFile" required />
-      </form>
-
-      <div class="wave-footer">
-        <img
-          src="../assets/layered-peaks-haikei.svg"
-          alt="Wave Footer"
-          class="w-full h-full"
-        />
-      </div>
-    </div>
-    <script src="../js/scriptGSAP.js"></script>
-  </body>
-  </html> -->
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>TabularDSA - Upload</title>
-      <!-- Tailwind CSS CDN -->
-      <script src="https://cdn.tailwindcss.com"></script>
-      <!-- GSAP CDN -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-      <!-- Montserrat and Poppins Fonts -->
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-      <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-      />
-      <style>
         /* Ensure the footer SVG stretches and only shows the wave */
         .wave-footer {
-          position: relative;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 400px; /* Adjust based on the actual wave height */
-          overflow: hidden;
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 400px; /* Adjust based on the actual wave height */
+            overflow: hidden;
         }
         .wave-footer img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover; /* Ensures the SVG scales without empty space */
-          object-position: bottom; /* Focus on the wave part (adjust as needed) */
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the SVG scales without empty space */
+            object-position: bottom; /* Focus on the wave part (adjust as needed) */
         }
         /* Ensure button visibility */
         .submit-btn {
-          display: inline-block;
-          visibility: visible;
-          opacity: 1 !important; /* Fallback in case GSAP fails */
-          min-height: 50px; /* Ensure it has a minimum height */
-          margin-bottom: 20px; /* Add some spacing to avoid overlap */
+            display: inline-block;
+            visibility: visible;
+            opacity: 1 !important; /* Fallback in case GSAP fails */
+            min-height: 50px; /* Ensure it has a minimum height */
+            margin-bottom: 20px; /* Add some spacing to avoid overlap */
         }
-        </style>
-  </head>
-  <body>
-    <div
-    class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden relative"
-    >
-    <!-- Main Content -->
-    <div class="container mx-auto text-white text-center py-20">
-      <!-- Hero Text -->
-      <h1
-      class="text-[20vw] font-bold uppercase leading-none mb-12"
-      style="
-            font-family: Poppins, sans-serif;
-            font-weight: 500;
-            font-style: italic;
-            "
-        >
-        <span>u</span><span>p</span><span>l</span><span>o</span><span>a</span><span>d</span>
-      </h1>
-      
-      <!-- Subtext -->
-      <p class="text-[2.5vw] uppercase mb-20">prepare your timetable data</p>
-      
-      <!-- Upload Form -->
-      <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-        <div class="space-y-10">
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">teachers</label>
-            <input
-            type="file"
-            name="teachersFile"
-            accept=".xlsx"
-            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-            required
-            />
-          </div>
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">subjects</label>
-            <input
-            type="file"
-            name="subjectsFile"
-            accept=".xlsx"
-            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-            required
-            />
-          </div>
-          <div>
-            <label class="block text-[3vw] uppercase mb-4">rooms</label>
-            <input
-            type="file"
-            name="roomsFile"
-            accept=".xlsx"
-            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
-            required
-            />
-          </div>
+    </style>
+</head>
+<body>
+    <div class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden relative">
+        <!-- Main Content -->
+        <div class="container mx-auto text-white text-center py-20">
+            <!-- Hero Text -->
+            <h1
+                class="text-[20vw] font-bold uppercase leading-none mb-12"
+                style="font-family: Poppins, sans-serif; font-weight: 500; font-style: italic;"
+            >
+                <span>u</span><span>p</span><span>l</span><span>o</span><span>a</span><span>d</span>
+            </h1>
+            
+            <!-- Subtext -->
+            <p class="text-[2.5vw] uppercase mb-20">prepare your timetable data</p>
+            
+            <!-- Upload Form -->
+            <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+                <div class="space-y-10">
+                    <div>
+                        <label class="block text-[3vw] uppercase mb-4">teachers</label>
+                        <input
+                            type="file"
+                            name="teachersFile"
+                            accept=".xlsx"
+                            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-[3vw] uppercase mb-4">subjects</label>
+                        <input
+                            type="file"
+                            name="subjectsFile"
+                            accept=".xlsx"
+                            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-[3vw] uppercase mb-4">rooms</label>
+                        <input
+                            type="file"
+                            name="roomsFile"
+                            accept=".xlsx"
+                            class="w-[40vw] mx-auto p-2 bg-black border-2 border-white rounded text-white file:bg-white file:text-black file:border-none file:p-2 file:rounded file:mr-4"
+                            required
+                        />
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    class="submit-btn mt-20 text-[3vw] uppercase bg-white text-black font-bold py-3 px-6 rounded hover:bg-black hover:text-white hover:border hover:border-white transition duration-300"
+                >
+                    Next
+                </button>
+            </form>
         </div>
         
-        <!-- Submit Button -->
-        <button
-        type="submit"
-        class="submit-btn mt-20 text-[3vw] uppercase bg-white text-black font-bold py-3 px-6 rounded hover:bg-black hover:text-white hover:border hover:border-white transition duration-300"
-        >
-        Next
-      </button>
-    </form>
-  </div>
-  
-  <!-- Wave Footer -->
-  <div class="wave-footer">
-    <img
-    src="../assets/layered-peaks-haikei.svg"
-    alt="Wave Footer"
-    class="w-full h-full"
-    />
-  </div>
-</div>
-<script>
-  // GSAP Animation for "upload" with Stagger and Blink
-gsap.from("h1 span", {
-  opacity: 0,
-  y: 50,
-  duration: 0.8,
-  stagger: 0.1,
-  ease: "back.out(1.7)",
-  onStart: function () {
-    // Add blinking effect for each letter
-    gsap.to("h1 span", {
-      keyframes: [
-        { opacity: 0, duration: 0.2 },
-        { opacity: 1, duration: 0.2 },
-        { opacity: 0, duration: 0.2 },
-        { opacity: 1, duration: 0.2 },
-      ],
-      stagger: 0.1,
-       // Blink twice
-      delay: 0.5,
-    });
-  },
-});
+        <!-- Wave Footer -->
+        <div class="wave-footer">
+            <img
+                src="../assets/layered-peaks-haikei.svg"
+                alt="Wave Footer"
+                class="w-full h-full"
+            />
+        </div>
+    </div>
+    <script>
+        // GSAP Animation for "upload" with Stagger and Blink
+        gsap.from("h1 span", {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "back.out(1.7)",
+            onStart: function () {
+                gsap.to("h1 span", {
+                    keyframes: [
+                        { opacity: 0, duration: 0.2 },
+                        { opacity: 1, duration: 0.2 },
+                        { opacity: 0, duration: 0.2 },
+                        { opacity: 1, duration: 0.2 },
+                    ],
+                    stagger: 0.1,
+                    repeat: 1,
+                    delay: 0.5,
+                });
+            },
+        });
 
-gsap.from("p", {
-  opacity: 0,
-  y: 30,
-  duration: 1,
-  delay: 0.8,
-  ease: "power2.out",
-});
-gsap.from(".space-y-10 div", {
-  opacity: 0,
-  y: 20,
-  duration: 0.8,
-  stagger: 0.2,
-  delay: 1.0,
-  ease: "power2.out",
-});
-gsap.from(".submit-btn", {
-  opacity: 0,
-  scale: 0.9,
-  duration: 0.8,
-  delay: 1.6,
-  ease: "elastic.out(1, 0.5)",
-});
-
-// Form Submission Logic
-document.querySelector(".submit-btn").addEventListener("click", () => {
-  const teachersInput = document.querySelector('input[name="teachersFile"]');
-  const subjectsInput = document.querySelector('input[name="subjectsFile"]');
-  const roomsInput = document.querySelector('input[name="roomsFile"]');
-  const form = document.getElementById("uploadForm");
-
-  if (
-    teachersInput instanceof HTMLInputElement &&
-    subjectsInput instanceof HTMLInputElement &&
-    roomsInput instanceof HTMLInputElement
-  ) {
-    form.querySelector('input[name="teachersFile"]').files = teachersInput.files;
-    form.querySelector('input[name="subjectsFile"]').files = subjectsInput.files;
-    form.querySelector('input[name="roomsFile"]').files = roomsInput.files;
-    form.submit();
-  }
-});
-</script>
-  </body>
+        gsap.from("p", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.8,
+            ease: "power2.out",
+        });
+        gsap.from(".space-y-10 div", {
+            opacity: 0,
+            y: 20,
+            duration: 0.8,
+            stagger: 0.2,
+            delay: 1.0,
+            ease: "power2.out",
+        });
+        gsap.from(".submit-btn", {
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.8,
+            delay: 1.6,
+            ease: "elastic.out(1, 0.5)",
+        });
+    </script>
+</body>
 </html>

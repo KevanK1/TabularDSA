@@ -1,169 +1,6 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TabularDSA - Assign Teachers</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
-    <style>
-      .wave-footer {
-        position: relative;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 400px;
-        overflow: hidden;
-      }
-      .wave-footer img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: bottom;
-      }
-      .glass-btn {
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        display: block !important;
-        margin: 20px auto;
-        color: white !important;
-      }
-      .glass-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.7);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-      }
-      .assignment-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0 auto;
-        max-width: 90vw;
-        overflow-x: auto;
-        display: block;
-      }
-      .assignment-table th,
-      .assignment-table td {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        padding: 10px;
-        text-align: center;
-        color: white;
-        font-family: Poppins, sans-serif;
-      }
-      .assignment-table th {
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 1.2vw;
-        font-weight: bold;
-        text-transform: uppercase;
-      }
-      .assignment-table td {
-        font-size: 1vw;
-      }
-      .assignment-table th:nth-child(1),
-      .assignment-table th:nth-child(2),
-      .assignment-table th:nth-child(3),
-      .assignment-table td:nth-child(1),
-      .assignment-table td:nth-child(2),
-      .assignment-table td:nth-child(3) {
-        background: rgba(255, 255, 255, 0.05);
-        min-width: 150px;
-      }
-    </style>
-  </head>
-  <body class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden">
-    <div class="container mx-auto text-white text-center py-20 pb-40">
-      <h1 class="text-[20vw] font-bold uppercase leading-none mb-12" style="font-family: Poppins, sans-serif; font-weight: 500; font-style: italic;">
-        <span>a</span><span>s</span><span>s</span><span>i</span><span>g</span><span>n</span>
-      </h1>
-      <p class="text-[2.5vw] uppercase mb-20">assign teachers to subjects</p>
-      <form id="assignForm" action="/get-timetable" method="POST">
-        <div class="mb-10">
-          <h2 class="text-[2vw] uppercase text-red-500 mb-4">Subject's Teacher Selection Page</h2>
-          <div class="overflow-x-auto">
-            <table class="assignment-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <% subjects.forEach(subject => { %>
-                    <th><%= subject.name %> (<%= subject.code %>)</th>
-                  <% }); %>
-                </tr>
-              </thead>
-              <tbody>
-                <% teachers.forEach(teacher => { %>
-                  <tr>
-                    <td><%= teacher.mis_id %></td>
-                    <td><%= teacher.name %></td>
-                    <td><%= teacher.email %></td>
-                    <% subjects.forEach(subject => { %>
-                      <td>
-                        <input type="checkbox" name="assignments[<%= subject._id %>][]" value="<%= teacher._id %>" <%= subject.assignedTeachers && subject.assignedTeachers.map(id => id.toString()).includes(teacher._id.toString()) ? 'checked' : '' %> />
-                      </td>
-                    <% }); %>
-                  </tr>
-                <% }); %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded">Submit</button>
-      </form>
-    </div>
-    <div class="wave-footer">
-      <img src="../assets/layered-peaks-haikei.svg" alt="Wave Footer" class="w-full h-full" />
-    </div>
-    <script>
-      gsap.from("h1 span", {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "back.out(1.7)",
-        onStart: function () {
-          gsap.to("h1 span", {
-            keyframes: [
-              { opacity: 0, duration: 0.2 },
-              { opacity: 1, duration: 0.2 },
-              { opacity: 0, duration: 0.2 },
-              { opacity: 1, duration: 0.2 },
-            ],
-            stagger: 0.1,
-            repeat: 1,
-            delay: 0.5,
-          });
-        },
-      });
-      gsap.from("p", {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        delay: 0.8,
-        ease: "power2.out",
-      });
-      gsap.from(".assignment-table", {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        delay: 1.0,
-        ease: "power2.out",
-      });
-      gsap.fromTo(".glass-btn", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, delay: 1.6, ease: "elastic.out(1, 0.5)" });
-    </script>
-  </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TabularDSA - Assign Teachers</title>
@@ -173,157 +10,178 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
     <style>
-      .wave-footer {
-        position: relative;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 400px;
-        overflow: hidden;
-      }
-      .wave-footer img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: bottom;
-      }
-      .glass-btn {
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        display: block !important;
-        margin: 20px auto;
-        color: white !important;
-      }
-      .glass-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.7);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-      }
-      .assignment-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 0 auto;
-        max-width: 90vw;
-        overflow-x: auto;
-        display: block;
-      }
-      .assignment-table th,
-      .assignment-table td {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        padding: 10px;
-        text-align: center;
-        color: white;
-        font-family: Poppins, sans-serif;
-      }
-      .assignment-table th {
-        background: rgba(255, 255, 255, 0.1);
-        font-size: 1.2vw;
-        font-weight: bold;
-        text-transform: uppercase;
-      }
-      .assignment-table td {
-        font-size: 1vw;
-      }
-      .assignment-table th:nth-child(1),
-      .assignment-table th:nth-child(2),
-      .assignment-table th:nth-child(3),
-      .assignment-table td:nth-child(1),
-      .assignment-table td:nth-child(2),
-      .assignment-table td:nth-child(3) {
-        background: rgba(255, 255, 255, 0.05);
-        min-width: 150px;
-      }
+        .wave-footer {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .wave-footer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: bottom;
+        }
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: block !important;
+            margin: 20px auto;
+            color: white !important;
+        }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            max-width: 90vw;
+            overflow-x: auto;
+            display: block;
+        }
+        .assignment-table th,
+        .assignment-table td {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            text-align: center;
+            color: white;
+            font-family: Poppins, sans-serif;
+        }
+        .assignment-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1.2vw;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .assignment-table td {
+            font-size: 1vw;
+        }
+        .assignment-table th:nth-child(1),
+        .assignment-table th:nth-child(2),
+        .assignment-table th:nth-child(3),
+        .assignment-table td:nth-child(1),
+        .assignment-table td:nth-child(2),
+        .assignment-table td:nth-child(3) {
+            background: rgba(255, 255, 255, 0.05);
+            min-width: 150px;
+        }
     </style>
-  </head>
-  <body class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden">
+</head>
+<body class="bg-black min-h-screen flex flex-col items-center justify-center overflow-x-hidden">
     <div class="container mx-auto text-white text-center py-20 pb-40">
-      <h1 class="text-[20vw] font-bold uppercase leading-none mb-12" style="font-family: Poppins, sans-serif; font-weight: 500; font-style: italic;">
-        <span>a</span><span>s</span><span>s</span><span>i</span><span>g</span><span>n</span>
-      </h1>
-      <p class="text-[2.5vw] uppercase mb-20">assign teachers to subjects</p>
-      <form id="assignForm" action="/assign" method="POST">
-        <div class="mb-10">
-          <h2 class="text-[2vw] uppercase text-red-500 mb-4">Subject's Teacher Selection Page</h2>
-          <div class="overflow-x-auto">
-            <table class="assignment-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <% subjects.forEach(subject => { %>
-                    <th><%= subject.name %> (<%= subject.code %>)</th>
-                  <% }); %>
-                </tr>
-              </thead>
-              <tbody>
-                <% teachers.forEach(teacher => { %>
-                  <tr>
-                    <td><%= teacher.mis_id %></td>
-                    <td><%= teacher.name %></td>
-                    <td><%= teacher.email %></td>
-                    <% subjects.forEach(subject => { %>
-                      <td>
-                        <input type="checkbox" name="assignments[<%= subject._id %>][]" value="<%= teacher._id %>" <%= subject.assignedTeachers && subject.assignedTeachers.map(id => id.toString()).includes(teacher._id.toString()) ? 'checked' : '' %> />
-                      </td>
-                    <% }); %>
-                  </tr>
-                <% }); %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded">Save Assignments</button>
-      </form>
-      <form action="/get-timetable" method="POST">
-        <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded mt-4">Generate Timetable</button>
-      </form>
+        <h1 class="text-[20vw] font-bold uppercase leading-none mb-12" style="font-family: Poppins, sans-serif; font-weight: 500; font-style: italic;">
+            <span>a</span><span>s</span><span>s</span><span>i</span><span>g</span><span>n</span>
+        </h1>
+        <p class="text-[2.5vw] uppercase mb-20">assign teachers to subjects</p>
+        <form id="assignForm" action="/assign" method="POST">
+            <input type="hidden" name="debug" value="save_and_generate">
+            <div class="mb-10">
+                <h2 class="text-[2vw] uppercase text-red-500 mb-4">Subject's Teacher Selection Page</h2>
+                <p class="text-[1.5vw] mb-4">Please assign at least 5 teachers per subject to ensure timetable generation.</p>
+                <div class="overflow-x-auto">
+                    <table class="assignment-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <% subjects.forEach(subject => { %>
+                                    <th><%= subject.name %> (<%= subject.code %>)</th>
+                                <% }); %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% teachers.forEach(teacher => { %>
+                                <tr>
+                                    <td><%= teacher.mis_id %></td>
+                                    <td><%= teacher.name %></td>
+                                    <td><%= teacher.email %></td>
+                                    <% subjects.forEach(subject => { %>
+                                        <td>
+                                            <input type="checkbox" name="assignments[<%= subject._id %>][]" value="<%= teacher._id %>" <%= subject.assignedTeachers && subject.assignedTeachers.map(id => id.toString()).includes(teacher._id.toString()) ? 'checked' : '' %> />
+                                        </td>
+                                    <% }); %>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded">Save and Generate Timetable</button>
+        </form>
     </div>
     <div class="wave-footer">
-      <img src="../assets/layered-peaks-haikei.svg" alt="Wave Footer" class="w-full h-full" />
+        <img src="../assets/layered-peaks-haikei.svg" alt="Wave Footer" class="w-full h-full" />
     </div>
     <script>
-      gsap.from("h1 span", {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "back.out(1.7)",
-        onStart: function () {
-          gsap.to("h1 span", {
-            keyframes: [
-              { opacity: 0, duration: 0.2 },
-              { opacity: 1, duration: 0.2 },
-              { opacity: 0, duration: 0.2 },
-              { opacity: 1, duration: 0.2 },
-            ],
+        // Validate that each subject has at least 5 teachers assigned
+        document.querySelector('form').addEventListener('submit', (e) => {
+            const assignments = {};
+            document.querySelectorAll('input[name^="assignments"]').forEach(input => {
+                const subjectId = input.name.match(/assignments\[(.*?)\]/)[1];
+                if (!assignments[subjectId]) assignments[subjectId] = [];
+                if (input.checked) assignments[subjectId].push(input.value);
+            });
+
+            console.log('Submitting assignments:', assignments);
+
+            // Validate assignments
+            for (const subjectId in assignments) {
+                if (assignments[subjectId].length < 5) {
+                    e.preventDefault();
+                    alert(`Please assign at least 5 teachers to each subject. Subject with ID ${subjectId} has only ${assignments[subjectId].length} teachers.`);
+                    return;
+                }
+            }
+        });
+
+        // GSAP Animations
+        gsap.from("h1 span", {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
             stagger: 0.1,
-            repeat: 1,
-            delay: 0.5,
-          });
-        },
-      });
-      gsap.from("p", {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        delay: 0.8,
-        ease: "power2.out",
-      });
-      gsap.from(".assignment-table", {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        delay: 1.0,
-        ease: "power2.out",
-      });
-      gsap.fromTo(".glass-btn", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, delay: 1.6, ease: "elastic.out(1, 0.5)" });
+            ease: "back.out(1.7)",
+            onStart: function () {
+                gsap.to("h1 span", {
+                    keyframes: [
+                        { opacity: 0, duration: 0.2 },
+                        { opacity: 1, duration: 0.2 },
+                        { opacity: 0, duration: 0.2 },
+                        { opacity: 1, duration: 0.2 },
+                    ],
+                    stagger: 0.1,
+                    repeat: 1,
+                    delay: 0.5,
+                });
+            },
+        });
+        gsap.from("p", {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.8,
+            ease: "power2.out",
+        });
+        gsap.from(".assignment-table", {
+            opacity: 0,
+            y: 20,
+            duration: 0.8,
+            delay: 1.0,
+            ease: "power2.out",
+        });
+        gsap.fromTo(".glass-btn", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, delay: 1.6, ease: "elastic.out(1, 0.5)" });
     </script>
-  </body>
+</body>
 </html>
