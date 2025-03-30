@@ -38,7 +38,18 @@ def assign_slot(timetable: TimetableDay, used_teachers: Dict, used_rooms: Dict, 
 
     available_subjects.sort(key=lambda s: subject_counts[division_name][s["name"]])  # Prioritize least assigned
     available_teachers = [t for t in teachers if t["id"] in sum([s["assignedTeachers"] for s in available_subjects], [])]
-    available_rooms = rooms
+    
+    # Filter available rooms based on current usage
+    available_rooms = []
+    for room in rooms:
+        room_conflict = False
+        # Check if room is already used in this time slot
+        for existing_slot in used_rooms.get((day, time_slot), []):
+            if existing_slot.room == room["name"]:
+                room_conflict = True
+                break
+        if not room_conflict:
+            available_rooms.append(room)
 
     slot_assigned = False
     for subject in available_subjects:
@@ -102,14 +113,16 @@ def generate_timetables(teachers: List[dict], subjects: List[dict], rooms: List[
     }
     print(f"Initialized subject_counts: {subject_counts}")  # Debug log
 
+    # Global state for tracking teacher and room assignments across all divisions
+    global_used_teachers = {}
+    global_used_rooms = {}
+
     for division in divisions:
         print(f"Generating timetable for {division['name']}")  # Debug log
         timetable = TimetableDay()
-        used_teachers = {}
-        used_rooms = {}
 
         # Start the recursive assignment from the first day and slot
-        success = assign_slot(timetable, used_teachers, used_rooms, subject_counts,
+        success = assign_slot(timetable, global_used_teachers, global_used_rooms, subject_counts,
                     teachers, subjects, rooms, 0, 0, division["name"])
         
         if success:
