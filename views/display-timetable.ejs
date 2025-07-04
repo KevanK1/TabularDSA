@@ -1,65 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Timetable</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        .timetable-card { margin: 20px 0; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .time-slot { padding: 15px; margin: 10px; background: #f8f9fa; border-radius: 8px; }
-        .time-slot h5 { color: #0d6efd; margin-bottom: 10px; }
-        .subject-badge { background: #0d6efd; color: white; padding: 5px 10px; border-radius: 5px; }
-        .empty-slot { background: #e9ecef; color: #6c757d; padding: 5px 10px; border-radius: 5px; }
+      .timetable-card {
+        margin: 20px 0;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .time-slot {
+        padding: 15px;
+        margin: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+      .time-slot h5 {
+        color: #0d6efd;
+        margin-bottom: 10px;
+      }
+      .subject-badge {
+        background: #0d6efd;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+      .empty-slot {
+        background: #e9ecef;
+        color: #6c757d;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
     </style>
-</head>
-<body class="bg-light">
+  </head>
+  <body class="bg-light">
     <div class="container py-5">
-        <h1 class="text-center mb-5">Generated Timetables</h1>
-        
-        <% if (!timetables || timetables.length === 0) { %>
-            <div class="alert alert-warning text-center">
-                No timetables available. Please ensure enough teachers are assigned to subjects.
-            </div>
-        <% } else { %>
-            <% timetables.forEach(timetable => { %>
-                <div class="card timetable-card">
-                    <div class="card-header bg-primary text-white">
-                        <h2 class="mb-0"><%= timetable.division %></h2>
+      <h1 class="text-center mb-5">Generated Timetables</h1>
+
+      <% if (!timetables || timetables.length === 0) { %>
+      <div class="alert alert-warning text-center">
+        No timetables available. Please ensure enough teachers are assigned to
+        subjects.
+      </div>
+      <% } else { %> <% timetables.forEach(timetable => { %>
+      <div class="card timetable-card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0"><%= timetable.division %></h2>
+        </div>
+        <div class="card-body">
+          <% const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
+          'Friday', 'Saturday']; %> <% days.forEach(day => { %> <% if
+          (timetable.schedule && timetable.schedule[day] &&
+          Object.keys(timetable.schedule[day]).length > 0) { %>
+          <div class="mb-4">
+            <h3 class="text-secondary mb-3"><%= day %></h3>
+            <div class="row">
+              <% Object.entries(timetable.schedule[day]).forEach(([time, slot])
+              => { %>
+              <div class="col-md-4 mb-3">
+                <div class="time-slot">
+                  <h5><%= time %></h5>
+                  <% if (slot.subject) { %>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span class="subject-badge"><%= slot.subject %></span>
+                    <div class="text-end">
+                      <div><small>Teacher: <%= slot.teacher %></small></div>
+                      <div><small>Room: <%= slot.room %></small></div>
                     </div>
-                    <div class="card-body">
-                        <% const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']; %>
-                        <% days.forEach(day => { %>
-                            <% if (Object.keys(timetable.schedule[day]).length > 0) { %>
-                                <div class="mb-4">
-                                    <h3 class="text-secondary mb-3"><%= day %></h3>
-                                    <div class="row">
-                                        <% Object.entries(timetable.schedule[day]).forEach(([time, slot]) => { %>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="time-slot">
-                                                    <h5><%= time %></h5>
-                                                    <% if (slot.subject) { %>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <span class="subject-badge"><%= slot.subject %></span>
-                                                            <div class="text-end">
-                                                                <div><small>Teacher: <%= slot.teacher %></small></div>
-                                                                <div><small>Room: <%= slot.room %></small></div>
-                                                            </div>
-                                                        </div>
-                                                    <% } else { %>
-                                                        <div class="empty-slot">Not Assigned</div>
-                                                    <% } %>
-                                                </div>
-                                            </div>
-                                        <% }) %>
-                                    </div>
-                                </div>
-                            <% } %>
-                        <% }) %>
-                    </div>
+                  </div>
+                  <% } else { %>
+                  <div class="empty-slot">Not Assigned</div>
+                  <% } %>
                 </div>
-            <% }) %>
-        <% } %>
+              </div>
+              <% }) %>
+            </div>
+          </div>
+          <% } %> <% }) %>
+        </div>
+      </div>
+      <% }) %> <% } %>
     </div>
-</body>
+  </body>
 </html>

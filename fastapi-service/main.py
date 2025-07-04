@@ -1,10 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Dict
 from timetable import generate_timetables
+from database import database
+from bson import ObjectId
 
 app = FastAPI()
 
+# Pydantic models for request and response
 class Teacher(BaseModel):
     id: str
     name: str
@@ -47,6 +50,21 @@ class TimetableDay(BaseModel):
 class TimetableResponse(BaseModel):
     division: str
     schedule: TimetableDay
+
+@app.get("/teachers", response_model=List[Teacher])
+async def list_teachers(request: Request):
+    teachers_cursor = request.app.mongodb["teachers"].find()
+    teachers = await teachers_cursor.to_list(1000)
+    return teachers
+
+@app.on_event("startup")
+async def startup_db_client():
+    app.mongodb_client = AsyncIOMotorClient("mongodb://localhost:27017/tabularDSA")
+    app.mongodb = app.mongodb_client["tabularDSA"]
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    app.mongodb_client.close()
 
 @app.post("/generate-timetable")
 async def generate_timetable_endpoint(request: TimetableRequest):

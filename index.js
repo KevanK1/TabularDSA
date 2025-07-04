@@ -1,3 +1,5 @@
+// Its not having the proper frontend as theres no field asking for the fixed slots and als odue this theres a mismatch in the data its getting and its expecting so we have to look on to it so resove the arised conflict
+
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -9,10 +11,10 @@ const app = express();
 // const con = require("./config/dbconfig");
 
 // Models
-const Teacher = require("./models/teacher");
-const Subject = require("./models/subject");
-const Room = require("./models/room");
-const Division = require("./models/division");
+const Teacher = require("./models ✅/teacher");
+const Subject = require("./models ✅/subject");
+const Room = require("./models ✅/room");
+const Division = require("./models ✅/division");
 
 // Middleware
 app.use(express.json());
@@ -41,63 +43,177 @@ app.post(
     { name: "teachersFile", maxCount: 1 },
     { name: "subjectsFile", maxCount: 1 },
     { name: "roomsFile", maxCount: 1 },
+    { name: "divisionsFile", maxCount: 1 },
   ]),
   async (req, res) => {
     try {
-      const { teachersFile, subjectsFile, roomsFile } = req.files;
+      const { teachersFile, subjectsFile, roomsFile, divisionsFile } =
+        req.files;
 
+      // Process Teachers File with enhanced schema
       const teachersWorkbook = xlsx.readFile(teachersFile[0].path);
       const teachersSheet = xlsx.utils.sheet_to_json(
         teachersWorkbook.Sheets[teachersWorkbook.SheetNames[0]]
       );
       const teachersData = teachersSheet.map((row) => ({
-        mis_id: row.mis_id,
-        name: row.name,
-        email: row.email,
+        mis_id: row.mis_id || row.MIS_ID,
+        name: row.name || row.Name,
+        email: row.email || row.Email,
+        designation:
+          row.designation || row.Designation || "ASSISTANT_PROFESSOR",
+        shift: row.shift || row.Shift || "MORNING",
+        subject_preferences: row.subject_preferences
+          ? typeof row.subject_preferences === "string"
+            ? row.subject_preferences.split(",").map((s) => s.trim())
+            : row.subject_preferences
+          : [],
+        availability: row.availability
+          ? typeof row.availability === "string"
+            ? JSON.parse(row.availability)
+            : row.availability
+          : {
+              Monday: [1, 2, 3, 4, 5, 6],
+              Tuesday: [1, 2, 3, 4, 5, 6],
+              Wednesday: [1, 2, 3, 4, 5, 6],
+              Thursday: [1, 2, 3, 4, 5, 6],
+              Friday: [1, 2, 3, 4, 5, 6],
+              Saturday: [1, 2, 3, 4, 5, 6],
+            },
       }));
       await Teacher.deleteMany();
       await Teacher.insertMany(teachersData);
 
+      // Process Subjects File with enhanced schema
       const subjectsWorkbook = xlsx.readFile(subjectsFile[0].path);
       const subjectsSheet = xlsx.utils.sheet_to_json(
         subjectsWorkbook.Sheets[subjectsWorkbook.SheetNames[0]]
       );
       const subjectsData = subjectsSheet.map((row) => ({
-        code: row.code,
-        name: row.name,
+        code: row.code || row.Code,
+        name: row.name || row.Name,
+        department: row.department || row.Department || "General",
+        semester: row.semester || row.Semester || 1,
+        weekly_hours: row.weekly_hours || row.Weekly_Hours || 3,
+        subject_type: row.subject_type || row.Subject_Type || "LECTURE", // LECTURE, LAB, PRACTICAL
+        assignedTeachers: [], // Will be filled in assignment step
       }));
       await Subject.deleteMany();
       await Subject.insertMany(subjectsData);
 
+      // Process Rooms File with enhanced schema
       const roomsWorkbook = xlsx.readFile(roomsFile[0].path);
       const roomsSheet = xlsx.utils.sheet_to_json(
         roomsWorkbook.Sheets[roomsWorkbook.SheetNames[0]]
       );
       const roomsData = roomsSheet.map((row) => ({
-        room_id: row.room_id,
-        name: row.name,
-        capacity: row.capacity,
+        room_id: row.room_id || row.Room_ID,
+        name: row.name || row.Name,
+        capacity: row.capacity || row.Capacity || 30,
+        room_type: row.room_type || row.Room_Type || "CLASSROOM", // CLASSROOM, LAB, HALL
+        equipment: row.equipment
+          ? typeof row.equipment === "string"
+            ? row.equipment.split(",").map((e) => e.trim())
+            : row.equipment
+          : [],
       }));
       await Room.deleteMany();
       await Room.insertMany(roomsData);
 
+      // Process Divisions File or create default divisions
+      let divisionsData = [];
+      if (divisionsFile && divisionsFile[0]) {
+        const divisionsWorkbook = xlsx.readFile(divisionsFile[0].path);
+        const divisionsSheet = xlsx.utils.sheet_to_json(
+          divisionsWorkbook.Sheets[divisionsWorkbook.SheetNames[0]]
+        );
+        divisionsData = divisionsSheet.map((row) => ({
+          name: row.name || row.Name,
+          semester: row.semester || row.Semester || 1,
+          department: row.department || row.Department || "General",
+          strength: row.strength || row.Strength || 30,
+          shift: row.shift || row.Shift || "MORNING",
+        }));
+      } else {
+        // Default divisions if no file provided
+        divisionsData = [
+          {
+            name: "Division A",
+            semester: 1,
+            department: "CSE",
+            strength: 60,
+            shift: "MORNING",
+          },
+          {
+            name: "Division B",
+            semester: 1,
+            department: "CSE",
+            strength: 60,
+            shift: "MORNING",
+          },
+          {
+            name: "Division C",
+            semester: 1,
+            department: "IT",
+            strength: 60,
+            shift: "MORNING",
+          },
+          {
+            name: "Division D",
+            semester: 1,
+            department: "ECE",
+            strength: 60,
+            shift: "MORNING",
+          },
+          {
+            name: "Division E",
+            semester: 1,
+            department: "MECH",
+            strength: 60,
+            shift: "MORNING",
+          },
+        ];
+      }
       await Division.deleteMany();
-      await Division.insertMany([
-        { name: "Division A" },
-        { name: "Division B" },
-        { name: "Division C" },
-        { name: "Division D" },
-        { name: "Division E" },
-      ]);
+      await Division.insertMany(divisionsData);
 
+      // Clean up uploaded files
       fs.unlinkSync(teachersFile[0].path);
       fs.unlinkSync(subjectsFile[0].path);
       fs.unlinkSync(roomsFile[0].path);
+      if (divisionsFile && divisionsFile[0]) {
+        fs.unlinkSync(divisionsFile[0].path);
+      }
 
-      res.redirect("/assign-teachers");
+      console.log(
+        `Uploaded: ${teachersData.length} teachers, ${subjectsData.length} subjects, ${roomsData.length} rooms, ${divisionsData.length} divisions`
+      );
+
+      // Trigger FastAPI timetable generation with minimal data
+      const axios = require("axios");
+      axios
+        .post(
+          process.env.FASTAPI_URL || "http://127.0.0.1:8000/generate-timetable",
+          {
+            semester: req.body.semester || 1,
+            academic_year: req.body.academic_year || "2024-25",
+            divisions: divisionsData.map((d) => d.name),
+          }
+        )
+        .then(() => {
+          res.redirect("/assign-teachers");
+        })
+        .catch((error) => {
+          console.error("Error triggering timetable generation:", error);
+          res.render("index", {
+            message:
+              "Files uploaded but timetable generation failed. Please try again.",
+          });
+        });
     } catch (err) {
       console.error("Upload error:", err);
-      res.render("index", { message: "Error uploading files." });
+      res.render("index", {
+        message: `Error uploading files: ${err.message}. Please check your Excel file format.`,
+      });
     }
   }
 );

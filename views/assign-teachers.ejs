@@ -91,31 +91,31 @@
                 <p class="text-[1.5vw] mb-4">Please assign at least 5 teachers per subject to ensure timetable generation.</p>
                 <div class="overflow-x-auto">
                     <table class="assignment-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <% subjects.forEach(subject => { %>
-                                    <th><%= subject.name %> (<%= subject.code %>)</th>
-                                <% }); %>
-                            </tr>
-                        </thead>
-                        <tbody>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Assign Teachers</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% subjects.forEach(subject => { %>
+                <tr>
+                    <td><%= subject.name %></td>
+                    <td><%= subject.subject_type %></td>
+                    <td>
+                        <select name="assignments[<%= subject._id %>]" multiple>
                             <% teachers.forEach(teacher => { %>
-                                <tr>
-                                    <td><%= teacher.mis_id %></td>
-                                    <td><%= teacher.name %></td>
-                                    <td><%= teacher.email %></td>
-                                    <% subjects.forEach(subject => { %>
-                                        <td>
-                                            <input type="checkbox" name="assignments[<%= subject._id %>][]" value="<%= teacher._id %>" <%= subject.assignedTeachers && subject.assignedTeachers.map(id => id.toString()).includes(teacher._id.toString()) ? 'checked' : '' %> />
-                                        </td>
-                                    <% }); %>
-                                </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+                                <option value="<%= teacher._id %>" <%= subject.assignedTeachers.some(at => at._id.toString() === teacher._id.toString()) ? 'selected' : '' %>>
+                                    <%= teacher.name %> - <%= teacher.designation || 'ASSISTANT_PROFESSOR' %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
                 </div>
             </div>
             <button type="submit" class="glass-btn text-[2.5vw] uppercase font-bold py-3 px-6 rounded">Save and Generate Timetable</button>
